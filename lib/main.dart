@@ -36,8 +36,9 @@ class _AuthScreenState extends State<AuthScreen> {
   void _login() {
     String code = _codeController.text.trim().toUpperCase();
     
-    if (code == 'BASIC') {
-      Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'Обычный', servers: 50)));
+    if (code == 'STIMMEVLONE') {
+  Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'СОЗДАТЕЛЬ', servers: 999)));
+} else if (code == 'BASIC') {
     } else if (code == 'PREMIUM') {
       Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'Премиум', servers: 65)));
     } else if (code == 'BEST') {
