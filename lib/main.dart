@@ -10,7 +10,7 @@ class VpnApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'VPN Сервис',
+      title: 'StimmeVpn',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(
         brightness: Brightness.dark,
@@ -36,21 +36,15 @@ class _AuthScreenState extends State<AuthScreen> {
   void _login() {
     String code = _codeController.text.trim().toUpperCase();
     
-    // Код создателя
     if (code == 'STIMMEVLONE') {
       Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'СОЗДАТЕЛЬ', servers: 999)));
-    } 
-    // Проверка индивидуальных кодов
-    else if (code.startsWith('BASIC-')) {
+    } else if (code.startsWith('BASIC-')) {
       Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'Обычный', servers: 50)));
-    } 
-    else if (code.startsWith('PREM-')) {
+    } else if (code.startsWith('PREM-')) {
       Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'Премиум', servers: 65)));
-    } 
-    else if (code.startsWith('BEST-')) {
+    } else if (code.startsWith('BEST-')) {
       Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'Лучший', servers: 80)));
-    } 
-    else {
+    } else {
       setState(() {
         _errorMessage = 'Неверный код. Проверьте сообщение от поддержки.';
       });
@@ -69,7 +63,7 @@ class _AuthScreenState extends State<AuthScreen> {
             const Icon(Icons.security, size: 80, color: Color(0xFF8B5CF6)),
             const SizedBox(height: 30),
             const Text(
-              'ВХОД В VPN',
+              'STIMMEVPN',
               textAlign: TextAlign.center,
               style: TextStyle(fontSize: 28, fontWeight: FontWeight.bold, letterSpacing: 2),
             ),
@@ -112,7 +106,6 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 }
 
-// --- ВТОРОЙ ЭКРАН (Сюда пропал тип MainScreen) ---
 class MainScreen extends StatefulWidget {
   final String plan;
   final int servers;
@@ -130,7 +123,7 @@ class _MainScreenState extends State<MainScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('БЕЗОПАСНЫЙ VPN'),
+        title: const Text('STIMMEVPN'),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
