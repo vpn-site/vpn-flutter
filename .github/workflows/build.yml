@@ -29,11 +29,21 @@ jobs:
         run: |
           flutter create temp_app
           cp -r temp_app/android .
-          cp temp_app/pubspec.yaml .
           rm -rf temp_app
+
+      - name: Download Icon and Setup
+        run: |
+          # Скачиваем вашу картинку как иконку
+          curl -L -o icon.png "https://s.fotora.ru/ccfe006d4c73559f.jpeg"
+          
+          # Меняем название приложения на StimmeVpn в файлах Android
+          sed -i 's/android:label="[^"]*"/android:label="StimmeVpn"/g' android/app/src/main/AndroidManifest.xml
 
       - name: Get dependencies
         run: flutter pub get
+
+      - name: Generate Icons
+        run: flutter pub run flutter_launcher_icons
 
       - name: Build APK
         run: flutter build apk --release
@@ -41,5 +51,5 @@ jobs:
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: vpn-apk
+          name: StimmeVpn-APK
           path: build/app/outputs/flutter-apk/app-release.apk
