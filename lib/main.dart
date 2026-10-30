@@ -36,32 +36,26 @@ class _AuthScreenState extends State<AuthScreen> {
   void _login() {
     String code = _codeController.text.trim().toUpperCase();
     
-    void _login() {
-  String code = _codeController.text.trim().toUpperCase();
-  
-  // Код создателя
-  if (code == 'STIMMEVLONE') {
-    Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'СОЗДАТЕЛЬ', servers: 999)));
-  } 
-  // Проверка индивидуальных кодов (начинаются с BASIC-)
-  else if (code.startsWith('BASIC-')) {
-    Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'Обычный', servers: 50)));
-  } 
-  // Проверка индивидуальных кодов (начинаются с PREM-)
-  else if (code.startsWith('PREM-')) {
-    Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'Премиум', servers: 65)));
-  } 
-  // Проверка индивидуальных кодов (начинаются с BEST-)
-  else if (code.startsWith('BEST-')) {
-    Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'Лучший', servers: 80)));
-  } 
-  // Если код не подошел
-  else {
-    setState(() {
-      _errorMessage = 'Неверный код. Проверьте сообщение от поддержки.';
-    });
-  }
+    // Код создателя
+    if (code == 'STIMMEVLONE') {
+      Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'СОЗДАТЕЛЬ', servers: 999)));
+    } 
+    // Проверка индивидуальных кодов
+    else if (code.startsWith('BASIC-')) {
+      Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'Обычный', servers: 50)));
+    } 
+    else if (code.startsWith('PREM-')) {
+      Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'Премиум', servers: 65)));
+    } 
+    else if (code.startsWith('BEST-')) {
+      Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'Лучший', servers: 80)));
+    } 
+    else {
+      setState(() {
+        _errorMessage = 'Неверный код. Проверьте сообщение от поддержки.';
+      });
     }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -89,7 +83,7 @@ class _AuthScreenState extends State<AuthScreen> {
             TextField(
               controller: _codeController,
               decoration: InputDecoration(
-                hintText: 'Например: PREMIUM',
+                hintText: 'Например: PREM-123',
                 filled: true,
                 fillColor: const Color(0xFF121218),
                 border: OutlineInputBorder(borderRadius: BorderRadius.circular(15), borderSide: BorderSide.none),
@@ -118,6 +112,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 }
 
+// --- ВТОРОЙ ЭКРАН (Сюда пропал тип MainScreen) ---
 class MainScreen extends StatefulWidget {
   final String plan;
   final int servers;
