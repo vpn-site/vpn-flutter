@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const VpnApp());
@@ -17,11 +18,60 @@ class VpnApp extends StatelessWidget {
         scaffoldBackgroundColor: const Color(0xFF08080A),
         primaryColor: const Color(0xFF8B5CF6),
       ),
-      home: const AuthScreen(),
+      home: const SplashScreen(), // Экран загрузки (проверка памяти)
     );
   }
 }
 
+// --- ЭКРАН ПРОВЕРКИ (ЗАГРУЗКА) ---
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
+
+  @override
+  State<SplashScreen> createState() => _SplashScreenState();
+}
+
+class _SplashScreenState extends State<SplashScreen> {
+  @override
+  void initState() {
+    super.initState();
+    _checkLogin();
+  }
+
+  void _checkLogin() async {
+    // Ждем 1 секунду для красоты
+    await Future.delayed(const Duration(seconds: 1));
+    
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String? savedPlan = prefs.getString('user_plan');
+    int? savedServers = prefs.getInt('user_servers');
+
+    if (!mounted) return;
+
+    if (savedPlan != null && savedServers != null) {
+      // Если код уже вводили ранее — сразу пускаем внутрь
+      Navigator.pushReplacement(context, MaterialPageRoute(
+        builder: (c) => MainScreen(plan: savedPlan, servers: savedServers)
+      ));
+    } else {
+      // Если нет — показываем экран ввода кода
+      Navigator.pushReplacement(context, MaterialPageRoute(
+        builder: (c) => const AuthScreen()
+      ));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return const Scaffold(
+      body: Center(
+        child: CircularProgressIndicator(color: Color(0xFF8B5CF6)),
+      ),
+    );
+  }
+}
+
+// --- ЭКРАН ВВОДА КОДА ---
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
 
@@ -33,17 +83,31 @@ class _AuthScreenState extends State<AuthScreen> {
   final TextEditingController _codeController = TextEditingController();
   String _errorMessage = '';
 
-  void _login() {
+  void _login() async {
     String code = _codeController.text.trim().toUpperCase();
-    
+    String plan = '';
+    int servers = 0;
+
     if (code == 'STIMMEVLONE') {
-      Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'СОЗДАТЕЛЬ', servers: 999)));
+      plan = 'СОЗДАТЕЛЬ'; servers = 999;
     } else if (code.startsWith('BASIC-')) {
-      Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'Обычный', servers: 50)));
+      plan = 'Обычный'; servers = 50;
     } else if (code.startsWith('PREM-')) {
-      Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'Премиум', servers: 65)));
+      plan = 'Премиум'; servers = 65;
     } else if (code.startsWith('BEST-')) {
-      Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'Лучший', servers: 80)));
+      plan = 'Лучший'; servers = 80;
+    }
+
+    if (plan.isNotEmpty) {
+      // СОХРАНЯЕМ данные в память телефона
+      SharedPreferences prefs = await SharedPreferences.getInstance();
+      await prefs.setString('user_plan', plan);
+      await prefs.setInt('user_servers', servers);
+
+      if (!mounted) return;
+      Navigator.pushReplacement(context, MaterialPageRoute(
+        builder: (c) => MainScreen(plan: plan, servers: servers)
+      ));
     } else {
       setState(() {
         _errorMessage = 'Неверный код. Проверьте сообщение от поддержки.';
@@ -106,6 +170,7 @@ class _AuthScreenState extends State<AuthScreen> {
   }
 }
 
+// --- ГЛАВНЫЙ ЭКРАН ---
 class MainScreen extends StatefulWidget {
   final String plan;
   final int servers;
@@ -119,6 +184,14 @@ class MainScreen extends StatefulWidget {
 class _MainScreenState extends State<MainScreen> {
   bool isConnected = false;
 
+  // Функция для выхода из аккаунта (если клиент захочет сменить код)
+  void _logout() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear(); // Очищаем память
+    if (!mounted) return;
+    Navigator.pushReplacement(context, MaterialPageRoute(builder: (c) => const AuthScreen()));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -127,6 +200,12 @@ class _MainScreenState extends State<MainScreen> {
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.exit_to_app, color: Colors.grey),
+            onPressed: _logout, // Кнопка выхода
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(20.0),
