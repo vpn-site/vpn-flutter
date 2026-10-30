@@ -36,19 +36,32 @@ class _AuthScreenState extends State<AuthScreen> {
   void _login() {
     String code = _codeController.text.trim().toUpperCase();
     
-    if (code == 'STIMMEVLONE') {
-  Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'СОЗДАТЕЛЬ', servers: 999)));
-} else if (code == 'BASIC') {
-    } else if (code == 'PREMIUM') {
-      Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'Премиум', servers: 65)));
-    } else if (code == 'BEST') {
-      Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'Лучший', servers: 80)));
-    } else {
-      setState(() {
-        _errorMessage = 'Неверный код. Проверьте сообщение от поддержки.';
-      });
-    }
+    void _login() {
+  String code = _codeController.text.trim().toUpperCase();
+  
+  // Код создателя
+  if (code == 'STIMMEVLONE') {
+    Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'СОЗДАТЕЛЬ', servers: 999)));
+  } 
+  // Проверка индивидуальных кодов (начинаются с BASIC-)
+  else if (code.startsWith('BASIC-')) {
+    Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'Обычный', servers: 50)));
+  } 
+  // Проверка индивидуальных кодов (начинаются с PREM-)
+  else if (code.startsWith('PREM-')) {
+    Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'Премиум', servers: 65)));
+  } 
+  // Проверка индивидуальных кодов (начинаются с BEST-)
+  else if (code.startsWith('BEST-')) {
+    Navigator.push(context, MaterialPageRoute(builder: (c) => const MainScreen(plan: 'Лучший', servers: 80)));
+  } 
+  // Если код не подошел
+  else {
+    setState(() {
+      _errorMessage = 'Неверный код. Проверьте сообщение от поддержки.';
+    });
   }
+    }
 
   @override
   Widget build(BuildContext context) {
