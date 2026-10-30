@@ -33,8 +33,8 @@ jobs:
 
       - name: Download Icon and Setup
         run: |
-          # Скачиваем вашу картинку как иконку
-          curl -L -o icon.png "https://s.fotora.ru/ccfe006d4c73559f.jpeg"
+          # Скачиваем вашу новую картинку
+          curl -L -o icon.png "https://s.fotora.ru/4f904d818594a4f1.jpeg"
           
           # Меняем название приложения на StimmeVpn в файлах Android
           sed -i 's/android:label="[^"]*"/android:label="StimmeVpn"/g' android/app/src/main/AndroidManifest.xml
